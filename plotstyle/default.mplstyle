@@ -1,0 +1,30 @@
+# Overrides layered on top of SciencePlots' ['science', 'no-latex'].
+# Only settings we deliberately deviate on belong here - everything else is
+# inherited, so upstream improvements carry over. See style.py for the order.
+
+# Okabe-Ito: colourblind-safe (Okabe & Ito 2008), fixed order. Series 1 is
+# always 0072B2, series 2 always D55E00. SciencePlots' own cycle is replaced
+# because it is not verified for colour vision deficiency.
+axes.prop_cycle: cycler('color', ['0072B2', 'D55E00', '009E73', 'CC79A7', 'E69F00', '56B4E9', 'F0E442', '000000'])
+
+# Computer Modern maths without a LaTeX installation. Write axis labels as raw
+# strings and they are typeset like LaTeX: r"$\sigma$ / MPa", r"$\varepsilon$ / -"
+mathtext.fontset: cm
+mathtext.default: regular
+
+# Two-level grid: major readable, minor merely hinted. This is what keeps large
+# measurement series legible; apply_ticks() drives the locators.
+axes.grid: True
+grid.linewidth: 0.4
+grid.alpha: 0.3
+xtick.minor.visible: True
+ytick.minor.visible: True
+
+# Vector output by default, text stays text (editable in Illustrator/Inkscape).
+savefig.format: pdf
+savefig.bbox: tight
+savefig.dpi: 300
+pdf.fonttype: 42
+ps.fonttype: 42
+
+legend.frameon: False

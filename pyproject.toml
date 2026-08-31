@@ -1,0 +1,33 @@
+[project]
+name = "plotstyle"
+version = "0.1.0"
+description = "One consistent, publication-ready matplotlib style and a small set of plot functions, shared across projects"
+requires-python = ">=3.10"
+dependencies = ["matplotlib", "SciencePlots", "pandas", "openpyxl"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+# Reading Ansys solver files directly (.rst, .d3plot, Fluent, CFX). Needs a local
+# Ansys installation (2023 R1 or newer) for the DPF server to start.
+ansys = ["ansys-dpf-core"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["plotstyle*"]
+
+# Without this block default.mplstyle is missing after a normal (non-editable)
+# pip install and apply_style() dies with FileNotFoundError.
+[tool.setuptools.package-data]
+plotstyle = ["*.mplstyle"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
