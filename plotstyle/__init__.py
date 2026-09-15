@@ -11,7 +11,7 @@ Built on SciencePlots for the journal base; default.mplstyle carries only the
 deliberate deviations (Okabe-Ito palette, Computer Modern maths, two-level grid).
 """
 from .io import load_data
-from .plotting import apply_ticks, plot_scatter, plot_series, plot_xy
+from .plotting import apply_ticks, plot_barh, plot_scatter, plot_series, plot_xy
 from .style import apply_style
 
 __version__ = "0.1.0"
@@ -23,4 +23,5 @@ __all__ = [
     "plot_xy",
     "plot_series",
     "plot_scatter",
+    "plot_barh",
 ]

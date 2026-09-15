@@ -5,7 +5,7 @@ import pytest
 
 matplotlib.use("Agg")
 
-from plotstyle import apply_style, plot_scatter, plot_series, plot_xy  # noqa: E402
+from plotstyle import apply_style, plot_barh, plot_scatter, plot_series, plot_xy  # noqa: E402
 
 
 @pytest.fixture
@@ -73,6 +73,34 @@ def test_plot_series_labels_override_column_names(df):
 def test_plot_scatter_adds_colorbar(df):
     fig, _ = plot_scatter(df, x="t", y="x", c="a", clabel=r"$T$ / °C")
     assert len(fig.axes) == 2    # main axes + colourbar
+
+
+@pytest.fixture
+def breakdown():
+    return pd.DataFrame({
+        "offer": ["A", "B"],
+        "cost": [3.0, 2.0],
+        "bonus": [-1.0, -4.0],
+        "credit": [-1.0, -1.0],
+    })
+
+
+def test_plot_barh_draws_one_segment_per_row_and_column(breakdown):
+    _, ax = plot_barh(breakdown, y="offer", x_cols=["cost", "bonus", "credit"])
+    assert len(ax.patches) == 6
+    assert [t.get_text() for t in ax.get_yticklabels()] == ["A", "B"]
+
+
+def test_plot_barh_stacks_negative_segments_left_of_zero(breakdown):
+    _, ax = plot_barh(breakdown, y="offer", x_cols=["cost", "bonus", "credit"])
+    credit_b = ax.containers[2].patches[1]
+    assert credit_b.get_x() == -4.0
+    assert credit_b.get_x() + credit_b.get_width() == -5.0
+
+
+def test_plot_barh_legend_uses_labels(breakdown):
+    _, ax = plot_barh(breakdown, y="offer", x_cols=["cost", "bonus"], labels={"cost": "Base"})
+    assert [t.get_text() for t in ax.get_legend().get_texts()] == ["Base", "bonus"]
 
 
 def test_saves_file(df, tmp_path):

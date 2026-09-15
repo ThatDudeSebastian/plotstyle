@@ -53,6 +53,7 @@ Tags are immutable once pushed. `git tag -l` lists them.
 | `plot_xy(df, x, y, …)` | One or a few curves. Up to ~8 series. |
 | `plot_series(df, x, y_cols, …)` | Many curves — colormap **plus** rotating line style |
 | `plot_scatter(df, x, y, c=…, …)` | Scatter, optionally coloured by a third column with a colourbar |
+| `plot_barh(df, y, x_cols, …)` | Horizontal stacked bars; negative segments stack left of zero (costs vs. credits) |
 | `apply_ticks(ax, …)` | Two-level tick and grid subdivision |
 | `load_data(path)` | CSV/Excel/TXT into one DataFrame shape |
 

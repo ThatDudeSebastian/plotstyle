@@ -13,6 +13,7 @@ from itertools import cycle
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+import numpy as np
 
 from .style import apply_style
 
@@ -160,3 +161,51 @@ def plot_scatter(df, x, y, c=None, ax=None, cmap="viridis", clabel=None,
     ax.set_aspect("equal", adjustable="datalim")
     apply_ticks(ax)
     return _finish(fig, ax, xlabel or x, ylabel or y, title, save_as)
+
+
+def plot_barh(df, y, x_cols, ax=None, colors=None, labels=None, xlabel=None,
+              title=None, save_as=None):
+    """Horizontal stacked bars: one bar per row, one segment per column.
+
+    Positive segments stack rightwards from zero, negative ones leftwards, so a
+    single bar shows costs and credits at once - a cost breakdown, for instance.
+    The first row is drawn at the top.
+
+    Parameters
+    ----------
+    y : str
+        Column holding the bar labels.
+    x_cols : sequence of str
+        Segment columns, stacked outwards from zero in this order.
+    colors : sequence, optional
+        One colour per column. None follows the style's colour cycle.
+    labels : dict, optional
+        Mapping column name -> legend text. Columns without an entry keep their
+        own name.
+    """
+    apply_style()
+    fig, ax = _new_ax(ax)
+
+    x_cols = list(x_cols)
+    labels = labels or {}
+    positions = np.arange(len(df))
+    right = np.zeros(len(df))
+    left = np.zeros(len(df))
+
+    for col, color in zip(x_cols, colors or [None] * len(x_cols), strict=True):
+        values = df[col].to_numpy(dtype=float)
+        # Surface-coloured edges leave a gap between neighbouring segments.
+        ax.barh(positions, values, left=np.where(values >= 0, right, left), color=color,
+                edgecolor=ax.get_facecolor(), linewidth=0.8, label=str(labels.get(col, col)))
+        right += np.clip(values, 0, None)
+        left += np.clip(values, None, 0)
+
+    ax.axvline(0, color="black", linewidth=0.6)
+    ax.set_yticks(positions, df[y])
+    ax.invert_yaxis()
+    ax.legend()
+    apply_ticks(ax, y_minor=None)
+    # Categories have no minor subdivision, and grid lines between bars are noise.
+    ax.yaxis.set_minor_locator(mticker.NullLocator())
+    ax.grid(False, axis="y", which="both")
+    return _finish(fig, ax, xlabel, None, title, save_as)
