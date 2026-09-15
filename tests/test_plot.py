@@ -98,6 +98,12 @@ def test_plot_barh_stacks_negative_segments_left_of_zero(breakdown):
     assert credit_b.get_x() + credit_b.get_width() == -5.0
 
 
+def test_plot_barh_zero_segment_sits_at_zero_not_at_the_stack_end(breakdown):
+    """Otherwise its sticky edge pins the axis limit to the longest bar."""
+    _, ax = plot_barh(breakdown.assign(zero=0.0), y="offer", x_cols=["cost", "zero"])
+    assert ax.containers[1].patches[0].get_x() == 0.0
+
+
 def test_plot_barh_legend_uses_labels(breakdown):
     _, ax = plot_barh(breakdown, y="offer", x_cols=["cost", "bonus"], labels={"cost": "Base"})
     assert [t.get_text() for t in ax.get_legend().get_texts()] == ["Base", "bonus"]

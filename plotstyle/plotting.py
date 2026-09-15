@@ -194,8 +194,11 @@ def plot_barh(df, y, x_cols, ax=None, colors=None, labels=None, xlabel=None,
 
     for col, color in zip(x_cols, colors or [None] * len(x_cols), strict=True):
         values = df[col].to_numpy(dtype=float)
+        # Zero-width segments start at 0: at the stack's outer end their sticky edge
+        # would pin the axis limit there and swallow the margin.
+        start = np.select([values > 0, values < 0], [right, left], 0.0)
         # Surface-coloured edges leave a gap between neighbouring segments.
-        ax.barh(positions, values, left=np.where(values >= 0, right, left), color=color,
+        ax.barh(positions, values, left=start, color=color,
                 edgecolor=ax.get_facecolor(), linewidth=0.8, label=str(labels.get(col, col)))
         right += np.clip(values, 0, None)
         left += np.clip(values, None, 0)
